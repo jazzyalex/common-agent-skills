@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenCode Free Workers"
+  short_description: "Delegate bounded work to free OpenCode models"
+  default_prompt: "Use $opencode-free-workers to delegate this bounded review or coding task to an appropriate free OpenCode model."
