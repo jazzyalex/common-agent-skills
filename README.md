@@ -2,7 +2,7 @@
 
 Vendor-neutral agent skills shared across Codex, Claude, and other compatible agents.
 
-Each canonical skill lives under `skills/<skill-name>/`. Its `SKILL.md` contains the portable instructions. Product-specific optional metadata belongs in clearly scoped locations such as `agents/openai.yaml`; the portable workflow must not depend on that metadata.
+Each canonical skill lives under `skills/<skill-name>/`. Its `SKILL.md` contains the portable default workflow. Conditional or high-cost procedures belong in linked references and are loaded only when needed. Product-specific optional metadata belongs in clearly scoped locations such as `agents/openai.yaml`; the portable workflow must not depend on that metadata.
 
 ## Install
 
@@ -20,4 +20,4 @@ After pulling changes, the linked installations update immediately because the r
 
 - Do not store credentials, private session exports, customer data, or machine-specific secrets in this repository.
 - Review provider-disclosure rules before invoking a skill that sends material to another service.
-- Keep remote publication private unless every tracked skill is intentionally public.
+- This repository is public. Inspect every staged change for private data and machine-specific details before pushing.
