@@ -1,5 +1,12 @@
 # Hardened mode
 
+Important compatibility note: the free OpenCode provider currently rejects
+`opencode run --pure` and custom inline `OPENCODE_CONFIG_CONTENT` tool or
+permission maps. This reference therefore does not apply to free Muse runs.
+Use the normal built-in-agent path from `opencode-free-workers` for free Muse,
+or use a separately validated non-free/provider route when strict technical
+containment is required.
+
 Read this reference only when the user requests strict containment, repository configuration is untrusted, or an authorized external-provider task still needs enforceable path and command limits. Hardened mode reduces risk but adds setup and verification cost. It does not make secrets suitable for delegation.
 
 ## Establish the boundary
@@ -38,6 +45,9 @@ OpenCode may append access to `~/.local/share/opencode/tool-output/*`. That dire
 
 ## Run and verify
 
-Run `opencode run --pure --format json` with `OPENCODE_AUTO_SHARE=false`, the verified task guard, exact agent, model, and repository root. Reuse the same session and guard for corrections.
+For a provider that has been separately verified to support hardened mode, run
+`opencode run --pure --format json` with `OPENCODE_AUTO_SHARE=false`, the
+verified task guard, exact agent, model, and repository root. Reuse the same
+session and guard for corrections. Do not use this command with free Muse.
 
 After coding, inspect the full diff and untracked files, require changes to stay within the authorized paths, and run the named checks independently. After review, validate every finding that will be reported. Export the session only when its recorded identity or full transcript is part of the required evidence.

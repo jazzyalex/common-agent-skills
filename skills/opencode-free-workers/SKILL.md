@@ -18,12 +18,15 @@ Treat the selected OpenCode provider as an external service. Never send credenti
 Use an exact model ID. Check `opencode models` only on first use, after an OpenCode upgrade, or when an ID fails.
 
 - Default: `opencode/muse-spark-1.3-contributor-free`.
+- Difficult implementation or review: the same Muse model with its `xhigh` variant.
 - Small mechanical work: `opencode/ling-3.0-flash-fin-free`.
 - Implementation fallback: `opencode/mimo-v2.5-free`.
 - Harder or second review: `opencode/nemotron-3-ultra-free`.
 - Avoid `opencode/nemotron-3.5-lightning-free` until revalidated.
 
 Availability and behavior drift; do not treat this list as a permanent ranking.
+
+Use Muse `xhigh` for difficult debugging, concurrency, cross-component changes, or a failure-sensitive review. Keep the default variant for ordinary work. Set `OPENCODE_WORKER_VARIANT=xhigh` on the runner invocation; do not assume other models expose the same variant.
 
 ## Prepare the task
 
@@ -33,18 +36,39 @@ The parent agent chooses branches and worktrees and owns fetch, pull, commit, pu
 
 ## Run
 
-Use the bundled runner so every invocation disables session sharing, automatic sharing, LSP processes, formatters, plugins, unselected OpenCode and MCP tools, and common secret-file reads:
+Use the bundled runner. It uses OpenCode's normal headless execution path, the built-in `plan` or `build` agent, and disables automatic sharing:
 
 ```sh
 <skill-directory>/scripts/run-worker.sh \
   <review|coding> <exact-model-id> <repository-root> '<task-prompt>'
 ```
 
+For Muse `xhigh`:
+
+```sh
+OPENCODE_WORKER_VARIANT=xhigh \
+  <skill-directory>/scripts/run-worker.sh \
+  <review|coding> opencode/muse-spark-1.3-contributor-free \
+  <repository-root> '<task-prompt>'
+```
+
+The free OpenCode provider currently rejects `opencode run --pure` and custom
+`OPENCODE_CONFIG_CONTENT` tool/permission maps with a 403 stating that the free
+tier must be used from within OpenCode. Do not add either one to this runner.
+The built-in `plan` agent remains read-only for review; the parent still owns
+scope, disclosure, and independent verification.
+
+The runner intentionally does not pass OpenCode's global `--auto` flag. That
+flag approves every permission not explicitly denied and is not a per-path
+allowlist. If external material is needed, create a sanitized staging copy
+inside the selected repository root, or choose an explicitly bounded root that
+contains all authorized inputs. Do not use `OPENCODE_WORKER_AUTO`.
+
 To continue the same worker session, append its session ID. Do not start a duplicate while a run may still be active.
 
 The runner uses the normal OpenCode database; never create an isolated `OPENCODE_DB`. Run OpenCode commands sequentially. If the shared database is locked, wait for the other OpenCode process and retry the same command.
 
-Review mode enables only read, grep, and glob. Coding mode also enables file writes and shell because ordinary implementation and tests need them; the task prompt supplies the practical file and command boundary. Use hardened mode instead when that boundary must be technically enforced.
+Review mode selects OpenCode's built-in `plan` agent. Coding mode selects the built-in `build` agent; the task prompt supplies the practical file and command boundary. The old inline tool/permission guard cannot be combined with the free provider. If strict technical containment is required, do not delegate that run to free Muse; use a validated compatible provider or hardened environment instead.
 
 Never add `--share`, invoke `/share`, weaken the runner's sharing controls, or use another provider or credential route to bypass a failure.
 
