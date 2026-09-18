@@ -16,6 +16,12 @@ The installer links each skill into the local Codex, Claude, and shared agent sk
 
 After pulling changes, the linked installations update immediately because the repository copy remains canonical.
 
+## Included skills
+
+- `free-model-workers` selects a currently free harness, model, and effort for bounded delegated work.
+- `cline-free-workers` runs bounded Cline review or coding workers without isolated session storage.
+- `opencode-free-workers` runs bounded OpenCode review or coding workers with session sharing disabled.
+
 ## Safety
 
 - Do not store credentials, private session exports, customer data, or machine-specific secrets in this repository.
